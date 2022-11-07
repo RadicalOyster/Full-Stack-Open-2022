@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const { init } = require('../app')
 const app = require('../app')
 const Blog = require('../models/blog')
 
@@ -40,11 +41,7 @@ const newBlog = {
 
 beforeEach(async () => {
     await Blog.deleteMany({})
-
-    initialBlogs.forEach(async (blog) => {
-        let blogObject = new Blog(blog)
-        await blogObject.save()
-    })
+    await Blog.insertMany(initialBlogs)
 })
 
 describe('Retrieving blogs from the database:', () => {
@@ -96,6 +93,45 @@ describe('Adding blogs to the database:', () => {
     test('adding new blog without url returns status code 400', async () => {
         let blog = { name: "Albert Einstein", title: "Everything is Relative" }
         await api.post('/api/blogs').send(blog).expect(400)
+    })
+})
+
+describe('Deleting blogs from the database', () => {
+    test('deleting blog returns status code 204', async () => {
+        const insertedBlog = await api.post('/api/blogs').send(newBlog)
+        await api.delete(`/api/blogs/${insertedBlog.body.id}`).expect(204)
+    })
+
+    test('deleting blog removes it from database', async () => {
+        let res = await api.get('/api/blogs')
+        const initialLength = res.body.length
+
+        const blogToDelete = res.body.at(-1)
+
+        await api.delete(`/api/blogs/${blogToDelete.id}`)
+
+        res = await api.get('/api/blogs')
+        expect(res.body.length).toEqual(initialLength - 1)
+    })
+})
+
+describe('Updating a blog in the database', () => {
+    test('updating blog returns status code 200', async () => {
+        const res = await api.get('/api/blogs')
+        const personToUpdate = res.body.at(-1)
+
+        await api.put(`/api/blogs/${personToUpdate.id}`).send({ likes: 200 }).expect(200)
+    })
+
+    test('updating blog correctly updates the number of likes', async () => {
+        let res = await api.get('/api/blogs')
+        const blogToUpdate = res.body.at(-1)
+
+        await api.put(`/api/blogs/${blogToUpdate.id}`).send({ likes: blogToUpdate.likes + 1})
+
+        res = await api.get('/api/blogs')
+        
+        expect(res.body.at(-1).likes).toEqual(blogToUpdate.likes + 1)
     })
 })
 
