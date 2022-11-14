@@ -14,7 +14,7 @@ const unknownEndpoint = (req, res, next) => {
 }
 
 const errorHandler = (error, req, res, next) => {
-    logger.error(error.name)
+    logger.error(error.message)
 
     if (error.name === 'CastError') {
         return res.status(400).send({ error: error.message })
