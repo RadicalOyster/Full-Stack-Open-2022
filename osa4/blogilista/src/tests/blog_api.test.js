@@ -138,6 +138,13 @@ describe('Adding blogs to the database:', () => {
         .send(blog)
         .expect(400)
     })
+
+    test('attempting to add a new blog without a token returns status code 401', async () => {
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(401)
+    })
 })
 
 describe('Deleting blogs from the database', () => {
