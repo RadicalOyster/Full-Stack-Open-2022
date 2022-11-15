@@ -16,7 +16,6 @@ const unknownEndpoint = (req, res, next) => {
 
 const tokenExtractor = (req, res, next) => {
     const auth = req.get('authorization')
-    console.log("AUTHORIZING THIS ASSHOLE!!!!!!!!!!!!!!!!!!!!!", auth, "\n\n\n\n\n")
     if (auth && auth.toLowerCase().startsWith('bearer ')) {
         const token = auth.substring(7)
         const decodedToken = jwt.verify(token, process.env.SECRET)
