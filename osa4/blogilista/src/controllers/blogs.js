@@ -11,30 +11,37 @@ blogsRouter.get('/', async (req, res) => {
 
 blogsRouter.post('/', async (req, res) => {
     const body = req.body
+    const user = req.user
 
-    const users = await User.find({})
+    if (!user) {
+        return res.status(401).json({ error: 'token missing or invalid' })
+    }
 
     const blog = new Blog({
         title: body.title,
         author: body.author,
         url: body.url,
         likes: body.likes,
-        user: users[0]._id
+        user: req.token.id
     })
 
     console.log(blog)
 
     const savedBlog = await blog.save()
-    users[0].blogs = users[0].blogs.concat(savedBlog._id)
-    await users[0].save()
+    user.blogs = user.blogs.concat(savedBlog._id)
+    await user.save()
 
     res.status(201).json(savedBlog)
-
 })
 
 blogsRouter.delete('/:id', async (req, res) => {
-    await Blog.findByIdAndRemove(req.params.id)
-    res.status(204).end()
+    const blogToRemove = await Blog.findById(req.params.id)
+    if (req.user && blogToRemove.user.toString() === req.user.id.toString()) {
+        await blogToRemove.remove()
+        res.status(204).end()
+    } else {
+        return res.status(401).json({ error: 'unathorized request' })
+    }
 })
 
 blogsRouter.put('/:id', async (req, res) => {
