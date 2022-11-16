@@ -1,0 +1,31 @@
+.error {
+    color: red;
+    font-weight: bold;
+    font-size: 26px;
+    width: 50%;
+    max-width: 700px;
+    border-radius: 5px;
+    border-color: black;
+    border-style: inset;
+    margin-bottom: 16px;
+    background-color: lightgray;
+}
+
+.notification {
+    color: green;
+    font-weight: bold;
+    font-size: 26px;
+    width: 50%;
+    max-width: 700px;
+    border-radius: 5px;
+    border-color: black;
+    border-style: inset;
+    margin-bottom: 16px;
+    background-color: lightgray;
+}
+
+.formspan {
+    display: inline-block;
+    width: 50px;
+    font-weight: bold;
+}
