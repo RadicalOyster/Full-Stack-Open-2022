@@ -29,3 +29,27 @@
     width: 50px;
     font-weight: bold;
 }
+
+.blogFrame {
+    border-style: solid;
+    border-radius: 2px;
+    margin-bottom: 6px;
+    padding-left: 5px;
+    padding-top: 2px;
+    padding-bottom: 4px;
+}
+
+.clickableText{
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: bold;
+    font-size: 12pt;
+}
+
+.clickableText:hover{
+    font-size: 13pt;
+}
+
+.marginButton {
+    margin-left: 5px;
+}
