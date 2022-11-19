@@ -2,14 +2,14 @@ const Notification = ({ message, isError }) => {
   if (message) {
     if (isError) {
       return (
-        <div className="error">
+        <div id='error' className='error'>
           {message}
         </div>
       )
     }
     else {
       return (
-        <div className="notification">
+        <div id='notification' className='notification'>
           {message}
         </div>
       )

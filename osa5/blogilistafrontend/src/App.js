@@ -15,11 +15,9 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
   const [notification, setNotification] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
 
   const blogFormRef = useRef()
+
 
 
   useEffect(() => {
@@ -81,21 +79,10 @@ const App = () => {
     setUser(null)
   }
 
-  const addBlog = async (event) => {
-    event.preventDefault()
-    const newBlog = {
-      author: author,
-      title: title,
-      url: url,
-      user: user
-    }
-
+  const addBlog = async (newBlog) => {
     try {
       await blogService.createBlog(newBlog)
-      const notificationMessage = `Added new blog ${title} by ${author}`
-      setTitle('')
-      setAuthor('')
-      setUrl('')
+      const notificationMessage = `Added new blog ${newBlog.title} by ${newBlog.author}`
       blogFormRef.current.toggleVisibility()
       const blogsList = await blogService.getAll()
       setBlogs(blogsList)
@@ -158,25 +145,23 @@ const App = () => {
         <Notification message={notification} isError={false} />
         <h2>Welcome to the Blogs List!</h2>
         <form onSubmit={handleLogout}>
-          <div>Logged in as {user.name} <button type="submit">Logout</button></div>
+          <div>Logged in as {user.name} <button className='logoutButton' type='submit'>Logout</button></div>
         </form>
         <div>
-          <Togglable buttonLabel="New blog" ref={blogFormRef}>
+          <Togglable buttonLabel='New blog' ref={blogFormRef}>
             <BlogForm
-              handleAuthorChange={({ target }) => setAuthor(target.value)}
-              handleUrlChange={({ target }) => setUrl(target.value)}
-              handleTitleChange={({ target }) => setTitle(target.value)}
-              title={title}
-              author={author}
-              url={url}
-              handleSubmit={addBlog}
+              createBlog={addBlog}
             />
           </Togglable>
         </div>
-        <h3>Blogs</h3>
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} handleLike={() => addLike(blog)} handleDelete={() => deleteBlog(blog)} />
-        )}
+        <div>
+          <h3>Blogs</h3>
+        </div>
+        <div className='blogsContainer'>
+          {blogs.map(blog =>
+            <Blog key={blog.id} blog={blog} user={user} handleLike={() => addLike(blog)} handleDelete={() => deleteBlog(blog)} />
+          )}
+        </div>
       </div>
     )
   }
@@ -186,7 +171,7 @@ const App = () => {
       <Notification message={errorMessage} isError={true} />
       <Notification message={notification} isError={false} />
       <h1>Login</h1>
-      <Togglable buttonLabel="Log in">
+      <Togglable buttonLabel='Log in'>
         <LoginForm
           handleUsernameChange={({ target }) => setUsername(target.value)}
           handlePasswordChange={({ target }) => setPassword(target.value)}
