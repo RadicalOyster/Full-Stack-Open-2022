@@ -7,7 +7,6 @@ const blogsSlice = createSlice({
     initialState,
     reducers: {
         updateBlogs(state, action) {
-            console.log(action.payload)
             return action.payload
         }
     }

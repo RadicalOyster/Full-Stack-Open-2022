@@ -1,10 +1,9 @@
 import Blog from './Blog'
 import { useSelector } from 'react-redux'
 
-const BlogList = ({ user }) => {
+const BlogList = ({ user, addLike, deleteBlog }) => {
     const blogs = [...useSelector((state) => state.blogs)]
-    console.log(blogs)
-    
+
     if (!blogs) {
         return <div></div>
     }

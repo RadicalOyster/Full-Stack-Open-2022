@@ -75,7 +75,6 @@ const App = () => {
             const notificationMessage = `Added new blog ${newBlog.title} by ${newBlog.author}`
             blogFormRef.current.toggleVisibility()
             const blogsList = await blogService.getAll()
-            console.log(blogsList)
             dispatch(setBlogs(blogsList))
             dispatch(setNotification(notificationMessage, 5))
         } catch (exception) {
@@ -141,7 +140,7 @@ const App = () => {
                 <div>
                     <h3>Blogs</h3>
                 </div>
-                <BlogList user={user} />
+                <BlogList user={user} addLike={addLike} deleteBlog={deleteBlog} />
             </div>
         )
     }
