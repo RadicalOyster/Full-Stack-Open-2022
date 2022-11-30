@@ -1,0 +1,55 @@
+.error {
+    color: red;
+    font-weight: bold;
+    font-size: 26px;
+    width: 50%;
+    max-width: 700px;
+    border-radius: 5px;
+    border-color: black;
+    border-style: inset;
+    margin-bottom: 16px;
+    background-color: lightgray;
+}
+
+.notification {
+    color: green;
+    font-weight: bold;
+    font-size: 26px;
+    width: 50%;
+    max-width: 700px;
+    border-radius: 5px;
+    border-color: black;
+    border-style: inset;
+    margin-bottom: 16px;
+    background-color: lightgray;
+}
+
+.formspan {
+    display: inline-block;
+    width: 50px;
+    font-weight: bold;
+}
+
+.blogFrame {
+    border-style: solid;
+    border-radius: 2px;
+    margin-bottom: 6px;
+    padding-left: 5px;
+    padding-top: 2px;
+    padding-bottom: 4px;
+}
+
+.clickableText {
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: bold;
+    font-size: 12pt;
+}
+
+.clickableText:hover {
+    font-size: 13pt;
+}
+
+.likeButton {
+    margin-left: 5px;
+}
