@@ -1,18 +1,19 @@
 import { useState, useEffect, useRef } from 'react'
+import { useDispatch } from 'react-redux'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
+import BlogList from './components/BlogList'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { setBlogs } from './reducers/blogsReducer'
 import { setNotification } from './reducers/notificationReducer'
-import { useDispatch } from 'react-redux'
 import './App.css'
 
 const App = () => {
     const dispatch = useDispatch()
-    const [blogs, setBlogs] = useState([])
     const [user, setUser] = useState(null)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
@@ -20,12 +21,12 @@ const App = () => {
     const blogFormRef = useRef()
 
     useEffect(() => {
-        const updateBlogs = async () => {
+        const getBlogs = async () => {
             const blogsList = await blogService.getAll()
-            setBlogs(blogsList)
+            dispatch(setBlogs(blogsList))
         }
 
-        updateBlogs()
+        getBlogs()
     }, [])
 
     useEffect(() => {
@@ -74,7 +75,8 @@ const App = () => {
             const notificationMessage = `Added new blog ${newBlog.title} by ${newBlog.author}`
             blogFormRef.current.toggleVisibility()
             const blogsList = await blogService.getAll()
-            setBlogs(blogsList)
+            console.log(blogsList)
+            dispatch(setBlogs(blogsList))
             dispatch(setNotification(notificationMessage, 5))
         } catch (exception) {
             dispatch(setNotification(exception.response.data.error, 5, true))
@@ -87,7 +89,7 @@ const App = () => {
             updatedBlog.likes = updatedBlog.likes + 1
             await blogService.addLike(updatedBlog)
             const blogsList = await blogService.getAll()
-            setBlogs(blogsList)
+            dispatch(setBlogs(blogsList))
         } catch (exception) {
             dispatch(setNotification(exception.response.data.error, 5, true))
         }
@@ -102,16 +104,20 @@ const App = () => {
             try {
                 await blogService.deleteBlog(blog)
                 const blogsList = await blogService.getAll()
-                setBlogs(blogsList)
-                dispatch(setNotification(`Deleted blog ${blog.title} by ${blog.author}`, 5))
+                dispatch(setBlogs(blogsList))
+                dispatch(
+                    setNotification(
+                        `Deleted blog ${blog.title} by ${blog.author}`,
+                        5
+                    )
+                )
             } catch (exception) {
-                dispatch(setNotification(exception.response.data.error, 5, true))
+                dispatch(
+                    setNotification(exception.response.data.error, 5, true)
+                )
             }
         }
     }
-
-    //Sort blogs by number of likes
-    blogs.sort((blog1, blog2) => (blog1.likes > blog2.likes ? -1 : 1))
 
     //Render the page
     if (user) {
@@ -135,17 +141,7 @@ const App = () => {
                 <div>
                     <h3>Blogs</h3>
                 </div>
-                <div className="blogsContainer">
-                    {blogs.map((blog) => (
-                        <Blog
-                            key={blog.id}
-                            blog={blog}
-                            user={user}
-                            handleLike={() => addLike(blog)}
-                            handleDelete={() => deleteBlog(blog)}
-                        />
-                    ))}
-                </div>
+                <BlogList user={user} />
             </div>
         )
     }
