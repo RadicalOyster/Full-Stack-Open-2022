@@ -6,15 +6,16 @@ import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { setNotification } from './reducers/notificationReducer'
+import { useDispatch } from 'react-redux'
 import './App.css'
 
 const App = () => {
+    const dispatch = useDispatch()
     const [blogs, setBlogs] = useState([])
     const [user, setUser] = useState(null)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [errorMessage, setErrorMessage] = useState(null)
-    const [notification, setNotification] = useState(null)
 
     const blogFormRef = useRef()
 
@@ -53,25 +54,15 @@ const App = () => {
             setUser(user)
             setUsername('')
             setPassword('')
-            setNotification('Logged in')
-            setTimeout(() => {
-                setNotification(null)
-            }, 2000)
-            setErrorMessage(null)
+            dispatch(setNotification('Logged in', 5, false))
         } catch (exception) {
-            setErrorMessage('wrong credentials')
-            setTimeout(() => {
-                setErrorMessage(null)
-            }, 2000)
+            dispatch(setNotification('wrong credentials', 5, true))
         }
     }
 
     const handleLogout = (event) => {
         event.preventDefault()
-        setNotification('Logged out')
-        setTimeout(() => {
-            setNotification(null)
-        }, 2000)
+        dispatch(setNotification('Logged out', 5))
         blogService.clearToken()
         window.localStorage.removeItem('loggedBlogappUser')
         setUser(null)
@@ -84,15 +75,9 @@ const App = () => {
             blogFormRef.current.toggleVisibility()
             const blogsList = await blogService.getAll()
             setBlogs(blogsList)
-            setNotification(notificationMessage)
-            setTimeout(() => {
-                setNotification(null)
-            }, 5000)
+            dispatch(setNotification(notificationMessage, 5))
         } catch (exception) {
-            setErrorMessage(exception.response.data.error)
-            setTimeout(() => {
-                setErrorMessage(null)
-            }, 5000)
+            dispatch(setNotification(exception.response.data.error, 5, true))
         }
     }
 
@@ -104,10 +89,7 @@ const App = () => {
             const blogsList = await blogService.getAll()
             setBlogs(blogsList)
         } catch (exception) {
-            setErrorMessage(exception.response.data.error)
-            setTimeout(() => {
-                setErrorMessage(null)
-            }, 5000)
+            dispatch(setNotification(exception.response.data.error, 5, true))
         }
     }
 
@@ -121,15 +103,9 @@ const App = () => {
                 await blogService.deleteBlog(blog)
                 const blogsList = await blogService.getAll()
                 setBlogs(blogsList)
-                setNotification(`Deleted blog ${blog.title} by ${blog.author}`)
-                setTimeout(() => {
-                    setNotification(null)
-                }, 5000)
+                dispatch(setNotification(`Deleted blog ${blog.title} by ${blog.author}`, 5))
             } catch (exception) {
-                setErrorMessage(exception.response.data.error)
-                setTimeout(() => {
-                    setErrorMessage(null)
-                }, 5000)
+                dispatch(setNotification(exception.response.data.error, 5, true))
             }
         }
     }
@@ -141,8 +117,7 @@ const App = () => {
     if (user) {
         return (
             <div>
-                <Notification message={errorMessage} isError={true} />
-                <Notification message={notification} isError={false} />
+                <Notification />
                 <h2>Welcome to the Blogs List!</h2>
                 <form onSubmit={handleLogout}>
                     <div>
@@ -177,8 +152,7 @@ const App = () => {
 
     return (
         <div>
-            <Notification message={errorMessage} isError={true} />
-            <Notification message={notification} isError={false} />
+            <Notification />
             <h1>Login</h1>
             <Togglable buttonLabel="Log in">
                 <LoginForm
