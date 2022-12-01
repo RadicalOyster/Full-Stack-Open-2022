@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = []
 
 const blogsSlice = createSlice({
-    name: 'notification',
+    name: 'blogs',
     initialState,
     reducers: {
         updateBlogs(state, action) {

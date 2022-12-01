@@ -1,20 +1,53 @@
+//react imports
 import { useState, useEffect, useRef } from 'react'
-import { useDispatch } from 'react-redux'
-import Blog from './components/Blog'
-import Notification from './components/Notification'
-import BlogForm from './components/BlogForm'
+import { useDispatch, useSelector } from 'react-redux'
+import { Routes, Route, Link } from 'react-router-dom'
+
+//import components
+import BlogsView from './components/BlogsView'
 import LoginForm from './components/LoginForm'
+import Header from './components/Header'
+import NavigationMenu from './components/NavigationMenu'
+import Notification from './components/Notification'
+import SingleBlogView from './components/SingleBlogView'
+import SingleUserView from './components/SingleUserView'
 import Togglable from './components/Togglable'
-import BlogList from './components/BlogList'
+import UsersView from './components/UsersView'
+
+//import services
 import blogService from './services/blogs'
 import loginService from './services/login'
+import userService from './services/users'
+
+//import reducers
 import { setBlogs } from './reducers/blogsReducer'
 import { setNotification } from './reducers/notificationReducer'
+import { setUser } from './reducers/loggedUserReducer'
+import { setUsers } from './reducers/usersReducer'
+
+//import style
 import './App.css'
+
+const Menu = () => {
+    const style = {
+        paddingRight: 5,
+        fontWeight: 'bold',
+    }
+
+    return (
+        <div>
+            <Link to="/" style={style}>
+                Blogs
+            </Link>
+            <Link to="/users" style={style}>
+                Users
+            </Link>
+        </div>
+    )
+}
 
 const App = () => {
     const dispatch = useDispatch()
-    const [user, setUser] = useState(null)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
@@ -32,32 +65,39 @@ const App = () => {
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
         if (loggedUserJSON) {
-            const user = JSON.parse(loggedUserJSON)
-            setUser(user)
-            blogService.setToken(user.token)
+            dispatch(setUser(JSON.parse(loggedUserJSON)))
         }
+    }, [])
+
+    useEffect(() => {
+        const getUsers = async () => {
+            const userList = await userService.getAll()
+            dispatch(setUsers(userList))
+        }
+
+        getUsers()
     }, [])
 
     const handleLogin = async (event) => {
         event.preventDefault()
         try {
-            const user = await loginService.login({
+            const loggedUser = await loginService.login({
                 username,
                 password,
             })
 
             window.localStorage.setItem(
                 'loggedBlogappUser',
-                JSON.stringify(user)
+                JSON.stringify(loggedUser)
             )
 
-            blogService.setToken(user.token)
-            setUser(user)
+            blogService.setToken(loggedUser.token)
+            dispatch(setUser(loggedUser))
             setUsername('')
             setPassword('')
             dispatch(setNotification('Logged in', 5, false))
         } catch (exception) {
-            dispatch(setNotification('wrong credentials', 5, true))
+            dispatch(setNotification('Wrong credentials', 5, true))
         }
     }
 
@@ -66,10 +106,10 @@ const App = () => {
         dispatch(setNotification('Logged out', 5))
         blogService.clearToken()
         window.localStorage.removeItem('loggedBlogappUser')
-        setUser(null)
+        dispatch(setUser(null))
     }
 
-    const addBlog = async (newBlog) => {
+    const createBlog = async (newBlog) => {
         try {
             await blogService.createBlog(newBlog)
             const notificationMessage = `Added new blog ${newBlog.title} by ${newBlog.author}`
@@ -119,28 +159,31 @@ const App = () => {
     }
 
     //Render the page
+    const user = useSelector(state => state.loggedUser)
     if (user) {
         return (
             <div>
                 <Notification />
-                <h2>Welcome to the Blogs List!</h2>
-                <form onSubmit={handleLogout}>
-                    <div>
-                        Logged in as {user.name}{' '}
-                        <button className="logoutButton" type="submit">
-                            Logout
-                        </button>
-                    </div>
-                </form>
                 <div>
-                    <Togglable buttonLabel="New blog" ref={blogFormRef}>
-                        <BlogForm createBlog={addBlog} />
-                    </Togglable>
+                    <NavigationMenu handleLogout={handleLogout} />
                 </div>
-                <div>
-                    <h3>Blogs</h3>
-                </div>
-                <BlogList user={user} addLike={addLike} deleteBlog={deleteBlog} />
+                <Routes>
+                    <Route
+                        path="/"
+                        element={
+                            <BlogsView
+                                createBlog={createBlog}
+                                user={user}
+                                addLike={addLike}
+                                deleteBlog={deleteBlog}
+                                blogFormRef={blogFormRef}
+                            />
+                        }
+                    />
+                    <Route path="/users" element={<UsersView />} />
+                    <Route path="/users/:id" element={<SingleUserView/>} />
+                    <Route path="/blogs/:id" element={<SingleBlogView addLike={addLike}/>} />
+                </Routes>
             </div>
         )
     }
