@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Form, Button } from 'react-bootstrap'
 
 const BlogForm = ({ createBlog }) => {
     const [author, setAuthor] = useState('')
@@ -31,44 +32,46 @@ const BlogForm = ({ createBlog }) => {
     }
 
     return (
-        <div >
+        <div>
             <h3>Create new</h3>
-            <form onSubmit={addBlog}>
-                <div>
-                    <span className="formspan">Title</span>{' '}
-                    <input
-                        id="title"
-                        placeholder="Title"
-                        type="text"
-                        value={title}
-                        onChange={handleTitleChange}
-                    />
-                </div>
-                <div>
-                    <span className="formspan">Author</span>{' '}
-                    <input
-                        id="author"
-                        placeholder="Author"
-                        type="text"
-                        value={author}
-                        onChange={handleAuthorChange}
-                    />
-                </div>
-                <div>
-                    <span className="formspan">Url</span>{' '}
-                    <input
-                        id="url"
-                        placeholder="Url"
-                        type="text"
-                        value={url}
-                        onChange={handleUrlChange}
-                    />
-                </div>
-                <br />
-                <button id="submitBlog" type="submit">
-                    Submit
-                </button>
-            </form>
+            <Form onSubmit={addBlog}>
+                <Form.Group>
+                    <div>
+                        <Form.Label>Title</Form.Label>{' '}
+                        <Form.Control
+                            id="title"
+                            placeholder="Title"
+                            type="text"
+                            value={title}
+                            onChange={handleTitleChange}
+                        />
+                    </div>
+                    <div>
+                        <Form.Label>Author</Form.Label>{' '}
+                        <Form.Control
+                            id="author"
+                            placeholder="Author"
+                            type="text"
+                            value={author}
+                            onChange={handleAuthorChange}
+                        />
+                    </div>
+                    <div>
+                        <Form.Label>Url</Form.Label>{' '}
+                        <Form.Control
+                            id="url"
+                            placeholder="Url"
+                            type="text"
+                            value={url}
+                            onChange={handleUrlChange}
+                        />
+                    </div>
+                    <br />
+                    <Button id="submitBlog" type="submit">
+                        Submit
+                    </Button>
+                </Form.Group>
+            </Form>
         </div>
     )
 }

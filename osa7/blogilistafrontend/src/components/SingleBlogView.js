@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { Button, Form, Table } from 'react-bootstrap'
 
 const SingleBlogView = ({ addLike, handleDelete, addComment }) => {
     let blogs = useSelector((state) => state.blogs)
@@ -17,31 +18,63 @@ const SingleBlogView = ({ addLike, handleDelete, addComment }) => {
             }
             return (
                 <div>
-                    <h2>{blog.title}</h2>
+                    <h2>
+                        {blog.title} | {blog.author}
+                    </h2>
                     <a target="_blank" href={blog.url}>
                         {blog.url}
                     </a>
                     <div>
                         {blog.likes} likes{' '}
-                        <button onClick={() => addLike(blog)}>Like</button>
+                        <Button onClick={() => addLike(blog)} size="small">
+                            Like
+                        </Button>
                     </div>
                     <div>added by {blog.user.name} </div>
-                    <button
+                    <Button
+                        className="blogButton"
                         id="deleteButton"
                         onClick={() => handleDelete(blog)}
                         style={showDelete}
+                        size="small"
                     >
                         Delete blog
-                    </button>
+                    </Button>
                     <h3>Comments</h3>
                     <form onSubmit={addComment}>
-                    <input name="comment"/><button type="submit">Add comment</button>
-                    <input name="blog" type="hidden" value={blog.id}/>
-                    <input name="title" type="hidden" value={blog.title}/>
+                        <Form.Control name="comment" />
+                        <Button
+                            type="submit"
+                            size="small"
+                            className="blogButton"
+                        >
+                            Add comment
+                        </Button>
+                        <Form.Control
+                            name="blog"
+                            type="hidden"
+                            value={blog.id}
+                        />
+                        <Form.Control
+                            name="title"
+                            type="hidden"
+                            value={blog.title}
+                        />
                     </form>
-                    {comments.map((comment) => {
-                        return <li key={comment.id}>{comment.content}</li>
-                    })}
+
+                    <div className="commentsList">
+                        <Table striped>
+                            <tbody>
+                                {comments.map((comment) => {
+                                    return (
+                                        <tr key={comment.id}>
+                                            <td>{comment.content}</td>
+                                        </tr>
+                                    )
+                                })}
+                            </tbody>
+                        </Table>
+                    </div>
                 </div>
             )
         }

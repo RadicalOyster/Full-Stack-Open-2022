@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { Table } from 'react-bootstrap'
 
 const MapUser = (user) => {
     let text = 'blogs'
@@ -8,42 +9,26 @@ const MapUser = (user) => {
     }
 
     return (
-        <li key={user.id}>
-        <table>
-            <tbody>
-                <tr>
-                    <td
-                        style={{
-                            minWidth: '120px',
-                            fontWeight: 'bold',
-                        }}
-                    >
-                        <Link to={`/users/${user.id}`}>{user.username}</Link>
-                    </td>
-                    <td>{user.blogs.length} {text}</td>
-                </tr>
-            </tbody>
-        </table>
-    </li>
+        <tr key={user.id}>
+            <td>
+                <Link className="leftTableElement" to={`/users/${user.id}`}>{user.username}</Link> <span>{user.blogs.length} {text}</span>
+            </td>
+        </tr>
     )
 }
 
 const UsersView = () => {
     const usersList = useSelector((state) => state.users)
 
-    return (
-        <div>
-            <h2>Users</h2>
-            <ul
-                className="usersContainer"
-                style={{ listStyle: 'none', paddingLeft: '6px' }}
-            >
-                {usersList.map((user) => (
-                    MapUser(user)
-                ))}
-            </ul>
-        </div>
-    )
+    if (usersList) {
+        return (
+            <div>
+                <Table striped>
+                    <tbody>{usersList.map((user) => MapUser(user))}</tbody>
+                </Table>
+            </div>
+        )
+    }
 }
 
 export default UsersView

@@ -48,7 +48,6 @@ const deleteBlog = async (blog) => {
 }
 
 const addComment = async (comment) => {
-    console.log(token)
     const config = {
         headers: { Authorization: token },
     }

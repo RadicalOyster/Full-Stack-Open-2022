@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { Button, Navbar, Nav } from 'react-bootstrap'
 
 const NavigationMenu = ({ handleLogout }) => {
     const user = useSelector((state) => state.loggedUser)
@@ -10,25 +11,30 @@ const NavigationMenu = ({ handleLogout }) => {
     const rightStyle = {
         paddingLeft: '5%',
         fontWeight: 'bold',
-        color: 'darkBlue'
     }
 
-    return (
-        <div style={{ backgroundColor: 'lightGray', marginBottom: '20px' }}>
-            <Link to="/" style={leftStyle}>
-                Blogs
-            </Link>
-            <Link to="/users" style={leftStyle}>
-                Users
-            </Link>
-            <span style={rightStyle}>
-                Logged in as {user.name}{' '}
-                <button className="logoutButton" onClick={handleLogout}>
-                    Logout
-                </button>
-            </span>
-        </div>
-    )
+        return (
+            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" className="navigationMenu">
+                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                <Navbar.Collapse id="responsive-navbar-nav">
+                    <Nav className="mr-auto">
+                        <Nav.Link variant="light" href="#" as="span">
+                            <Link to="/">Blogs</Link>
+                        </Nav.Link>
+                        <Nav.Link href="#" as="span">
+                            <Link to="/users">Users</Link>
+                        </Nav.Link>
+                        <Nav.Link href="#" as="span">
+                            {user ? (
+                                <em>Logged in as {user.name} <Button variant="secondary" size="small" onClick={() => handleLogout()}>Log out</Button></em>
+                            ) : (
+                                <Link to="/login">login</Link>
+                            )}
+                        </Nav.Link>
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
+        )
 }
 
 export default NavigationMenu

@@ -1,15 +1,22 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-const Blog = ({ blog, handleLike, handleDelete, user }) => {
+const Blog = ({ blog }) => {
     return (
-        <div className="blogFrame">
-            <div>
-                <span>
-                <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-                </span>{' '}
-                | {blog.author}
-            </div>
+        <div>
+            <table>
+                <tbody>
+                    <tr>
+                        <td className="titleContainer">
+                            <Link
+                                to={`/blogs/${blog.id}`}
+                            >
+                                {blog.title}
+                            </Link>
+                        </td>
+                        <td className="author">{blog.author}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     )
 }

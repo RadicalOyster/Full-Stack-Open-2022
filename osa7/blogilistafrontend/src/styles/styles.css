@@ -1,0 +1,58 @@
+.btn-small {
+    padding: 0.5em;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+}
+
+.titleContainer {
+    min-width: 20rem;
+}
+
+.navigationMenu {
+    padding-left: 0.75em;
+    padding-right: 0.75em;
+    margin-left: -0.75em;
+    margin-right: -0.75em;
+    border-style: solid;
+    border-color: rgb(20, 20, 30);
+    border-width: 0.25em;
+    margin-bottom: 1em;
+}
+
+.container {
+    background-color: rgb(240, 240, 250);
+    height: 100%;
+    border-style: groove;
+    border-color: rgb(20, 20, 30);
+    border-radius: 0.5em;
+}
+
+.notification {
+    width: fit-content;
+    min-width: 200px;
+    margin:0 auto;
+    text-align: center;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.leftTableElement {
+    display: block;
+}
+
+.form-control {
+    max-width: 33%;
+}
+
+.commentsList {
+    margin-top: 0.55em;
+    margin-bottom: 0.35em;
+    margin-left: 0.35em;
+    margin-right: 0.35em;
+    background-color: rgb(220, 220, 230);
+}
+
+.blogButton {
+    margin-top: 0.35em;
+    margin-left: 0.15em;
+}

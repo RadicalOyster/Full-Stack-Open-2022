@@ -1,16 +1,15 @@
 //react imports
 import { useState, useEffect, useRef } from 'react'
-import { connect, useDispatch, useSelector } from 'react-redux'
-import { Routes, Route, Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { Routes, Route } from 'react-router-dom'
 
 //import components
 import BlogsView from './components/BlogsView'
-import LoginForm from './components/LoginForm'
+import LoginView from './components/LoginView'
 import NavigationMenu from './components/NavigationMenu'
 import Notification from './components/Notification'
 import SingleBlogView from './components/SingleBlogView'
 import SingleUserView from './components/SingleUserView'
-import Togglable from './components/Togglable'
 import UsersView from './components/UsersView'
 
 //import services
@@ -24,9 +23,8 @@ import { setNotification } from './reducers/notificationReducer'
 import { setUser } from './reducers/loggedUserReducer'
 import { setUsers } from './reducers/usersReducer'
 
-//import style
-import './App.css'
-import blogs from './services/blogs'
+//import styles
+import './styles/styles.css'
 
 const App = () => {
     const dispatch = useDispatch()
@@ -48,7 +46,7 @@ const App = () => {
         const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
         if (loggedUserJSON) {
             dispatch(setUser(JSON.parse(loggedUserJSON)))
-            blogs.setToken(JSON.parse(loggedUserJSON).token)
+            blogService.setToken(JSON.parse(loggedUserJSON).token)
         }
     }, [])
 
@@ -84,8 +82,7 @@ const App = () => {
         }
     }
 
-    const handleLogout = (event) => {
-        event.preventDefault()
+    const handleLogout = () => {
         dispatch(setNotification('Logged out', 5))
         blogService.clearToken()
         window.localStorage.removeItem('loggedBlogappUser')
@@ -146,10 +143,10 @@ const App = () => {
         const content = event.target.comment.value
         const id = event.target.blog.value
         const title = event.target.title.value
-        
+
         const commentToAdd = {
             content: content,
-            blog: id
+            blog: id,
         }
 
         await blogService.addComment(commentToAdd)
@@ -163,39 +160,46 @@ const App = () => {
 
     //Render the page
     const user = useSelector((state) => state.loggedUser)
+
     if (user) {
         return (
             <div>
                 <Notification />
-                <div>
-                    <NavigationMenu handleLogout={handleLogout} />
+                <div className="container">
+                    <div>
+                        <NavigationMenu handleLogout={handleLogout} />
+
+                        <Routes>
+                            <Route
+                                path="/"
+                                element={
+                                    <BlogsView
+                                        createBlog={createBlog}
+                                        user={user}
+                                        addLike={addLike}
+                                        deleteBlog={deleteBlog}
+                                        blogFormRef={blogFormRef}
+                                    />
+                                }
+                            />
+                            <Route path="/users" element={<UsersView />} />
+                            <Route
+                                path="/users/:id"
+                                element={<SingleUserView />}
+                            />
+                            <Route
+                                path="/blogs/:id"
+                                element={
+                                    <SingleBlogView
+                                        addLike={addLike}
+                                        handleDelete={deleteBlog}
+                                        addComment={addComment}
+                                    />
+                                }
+                            />
+                        </Routes>
+                    </div>
                 </div>
-                <Routes>
-                    <Route
-                        path="/"
-                        element={
-                            <BlogsView
-                                createBlog={createBlog}
-                                user={user}
-                                addLike={addLike}
-                                deleteBlog={deleteBlog}
-                                blogFormRef={blogFormRef}
-                            />
-                        }
-                    />
-                    <Route path="/users" element={<UsersView />} />
-                    <Route path="/users/:id" element={<SingleUserView />} />
-                    <Route
-                        path="/blogs/:id"
-                        element={
-                            <SingleBlogView
-                                addLike={addLike}
-                                handleDelete={deleteBlog}
-                                addComment={addComment}
-                            />
-                        }
-                    />
-                </Routes>
             </div>
         )
     }
@@ -203,20 +207,15 @@ const App = () => {
     return (
         <div>
             <Notification />
-            <h1>Login</h1>
-            <Togglable buttonLabel="Log in">
-                <LoginForm
-                    handleUsernameChange={({ target }) =>
-                        setUsername(target.value)
-                    }
-                    handlePasswordChange={({ target }) =>
-                        setPassword(target.value)
-                    }
+            <div className="container">
+                <LoginView
+                    setUsername={setUsername}
+                    setPassword={setPassword}
                     username={username}
                     password={password}
-                    handleSubmit={handleLogin}
+                    handleLogin={handleLogin}
                 />
-            </Togglable>
+            </div>
         </div>
     )
 }
