@@ -1,12 +1,11 @@
 //react imports
 import { useState, useEffect, useRef } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
 import { Routes, Route, Link } from 'react-router-dom'
 
 //import components
 import BlogsView from './components/BlogsView'
 import LoginForm from './components/LoginForm'
-import Header from './components/Header'
 import NavigationMenu from './components/NavigationMenu'
 import Notification from './components/Notification'
 import SingleBlogView from './components/SingleBlogView'
@@ -27,24 +26,7 @@ import { setUsers } from './reducers/usersReducer'
 
 //import style
 import './App.css'
-
-const Menu = () => {
-    const style = {
-        paddingRight: 5,
-        fontWeight: 'bold',
-    }
-
-    return (
-        <div>
-            <Link to="/" style={style}>
-                Blogs
-            </Link>
-            <Link to="/users" style={style}>
-                Users
-            </Link>
-        </div>
-    )
-}
+import blogs from './services/blogs'
 
 const App = () => {
     const dispatch = useDispatch()
@@ -66,6 +48,7 @@ const App = () => {
         const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
         if (loggedUserJSON) {
             dispatch(setUser(JSON.parse(loggedUserJSON)))
+            blogs.setToken(JSON.parse(loggedUserJSON).token)
         }
     }, [])
 
@@ -158,8 +141,28 @@ const App = () => {
         }
     }
 
+    const addComment = async (event) => {
+        event.preventDefault()
+        const content = event.target.comment.value
+        const id = event.target.blog.value
+        const title = event.target.title.value
+        
+        const commentToAdd = {
+            content: content,
+            blog: id
+        }
+
+        await blogService.addComment(commentToAdd)
+        const notificationMessage = `Posted a comment to the blog ${title}`
+        const blogsList = await blogService.getAll()
+        dispatch(setBlogs(blogsList))
+        dispatch(setNotification(notificationMessage, 5))
+
+        event.target.comment.value = ''
+    }
+
     //Render the page
-    const user = useSelector(state => state.loggedUser)
+    const user = useSelector((state) => state.loggedUser)
     if (user) {
         return (
             <div>
@@ -181,8 +184,17 @@ const App = () => {
                         }
                     />
                     <Route path="/users" element={<UsersView />} />
-                    <Route path="/users/:id" element={<SingleUserView/>} />
-                    <Route path="/blogs/:id" element={<SingleBlogView addLike={addLike}/>} />
+                    <Route path="/users/:id" element={<SingleUserView />} />
+                    <Route
+                        path="/blogs/:id"
+                        element={
+                            <SingleBlogView
+                                addLike={addLike}
+                                handleDelete={deleteBlog}
+                                addComment={addComment}
+                            />
+                        }
+                    />
                 </Routes>
             </div>
         )
