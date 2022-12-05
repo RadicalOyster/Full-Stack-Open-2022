@@ -133,7 +133,7 @@ const typeDefs = gql`
 
 const mapAuthor = (author) => {
   const authoredBooks = books.filter(book => book.author === author.name)
-  return { name: author.name, bookCount: authoredBooks.length }
+  return { name: author.name, bookCount: authoredBooks.length, born: author.born }
 }
 
 const getBooks = (author, genre) => {
@@ -172,7 +172,6 @@ const resolvers = {
     editAuthor: (root, args) => {
       const author = authors.find(author => author.name === args.name)
       if (author) {
-        console.log("HAPPY BOI!")
         const updatedAuthor = { ...author, born: args.setBornTo }
         authors = authors.map(author =>
           author.name === updatedAuthor.name ? updatedAuthor : author
