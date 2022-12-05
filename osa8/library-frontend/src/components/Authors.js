@@ -13,7 +13,7 @@ const EDIT_AUTHOR = gql`
 `;
 
 const Authors = ({ authors, show }) => {
-  const [name, setName] = useState("");
+  const [name, setName] = useState(authors[0].name);
   const [born, setBorn] = useState("");
   const [editAuthor] = useMutation(EDIT_AUTHOR);
 
@@ -23,10 +23,8 @@ const Authors = ({ authors, show }) => {
 
   const submit = async (event) => {
     event.preventDefault();
-
     editAuthor({ variables: { name: name.value, setBornTo: parseInt(born) } });
 
-    setName("");
     setBorn("");
   };
 
@@ -66,7 +64,7 @@ const Authors = ({ authors, show }) => {
             onChange={({ target }) => setBorn(target.value)}
           />
         </div>
-        <button type="submit">Set birtyear</button>
+        <button type="submit">Set birthyear</button>
       </form>
     </div>
   );
