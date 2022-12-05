@@ -47,11 +47,17 @@ const typeDefs = gql`
     born: Int
   }
 
+  type Genre {
+    label: String!
+  }
+
   type Query {
     bookCount: Int
     authorCount: Int
     allBooks(author: String, genre: String): [Book!]
     allAuthors: [Author!]
+    allGenres: [String]
+    booksByGenres(genres: [String]): [Book]
     me: User
   }
 
@@ -110,15 +116,45 @@ getAuthors = async () => {
   return authors;
 };
 
+getGenres = async () => {
+  const books = await Book.find({});
+  let genres = new Set()
+  books.forEach(book => {
+    book.genres.forEach(genre => {
+      genres.add(genre)
+    })
+  })
+  return Array.from(genres)
+}
+
+getBooksByGenres = async (genres) => {
+  let books = await Book.find({}).populate("author")
+  books = books.map(book => {
+    return ( {author: book.author.name, title: book.title, genres: book.genres, published: book.published } )
+  })
+
+  if (genres.length === 0) {
+    return books
+  }
+
+  const booksWithGenres = books.filter(book => {
+    return book.genres.some(genre => genres.includes(genre));
+  })
+  console.log(booksWithGenres)
+  return booksWithGenres
+}
+
 const resolvers = {
   Query: {
     bookCount: async () => Book.collection.countDocuments(),
     authorCount: async () => Author.collection.countDocuments(),
     allBooks: async (root, args) => await getBooks(args.author, args.genre),
     allAuthors: async () => getAuthors(),
+    allGenres: async () => getGenres(),
     me: (root, args, context) => {
       return context.currentUser;
     },
+    booksByGenres: async (root, args) => getBooksByGenres(args.genres),
   },
   Mutation: {
     addBook: async (root, args, context) => {
@@ -134,7 +170,6 @@ const resolvers = {
         if (!bookAuthor) {
           const newAuthor = { name: args.author };
           const authorToAdd = new Author(newAuthor);
-          console.log(authorToAdd);
           bookAuthor = await authorToAdd.save();
         }
 

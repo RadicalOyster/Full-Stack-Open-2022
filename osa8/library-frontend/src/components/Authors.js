@@ -12,7 +12,7 @@ const EDIT_AUTHOR = gql`
   }
 `;
 
-const Authors = ({ authors, show }) => {
+const Authors = ({ authors, show, token }) => {
   const [name, setName] = useState(authors[0].name);
   const [born, setBorn] = useState("");
   const [editAuthor] = useMutation(EDIT_AUTHOR);
@@ -28,6 +28,35 @@ const Authors = ({ authors, show }) => {
     setBorn("");
   };
 
+  const AuthorEdit = () => {
+    if (!token) {
+      return null
+    }
+    return (
+      <div>
+        <h2>Set Birthyear</h2>
+        <form onSubmit={submit}>
+          <div style={{ maxWidth: "300px", marginBottom: "10px" }}>
+            <Select
+              options={authors.map((author) => {
+                return { value: author.name, label: author.name };
+              })}
+              onChange={setName}
+            />
+          </div>
+          <div>
+            Born
+            <input
+              value={born}
+              onChange={({ target }) => setBorn(target.value)}
+            />
+          </div>
+          <button type="submit">Set birthyear</button>
+        </form>
+      </div>
+    );
+  };
+
   return (
     <div>
       <h2>Authors</h2>
@@ -35,8 +64,8 @@ const Authors = ({ authors, show }) => {
         <tbody>
           <tr>
             <th></th>
-            <th>born</th>
-            <th>books</th>
+            <th>Born</th>
+            <th>Books</th>
           </tr>
           {authors.map((author) => (
             <tr key={author.name}>
@@ -47,25 +76,7 @@ const Authors = ({ authors, show }) => {
           ))}
         </tbody>
       </table>
-      <h2>Set Birthyear</h2>
-      <form onSubmit={submit}>
-        <div style={{ maxWidth: "300px", marginBottom: "10px" }}>
-          <Select
-            options={authors.map((author) => {
-              return { value: author.name, label: author.name };
-            })}
-            onChange={setName}
-          />
-        </div>
-        <div>
-          Born
-          <input
-            value={born}
-            onChange={({ target }) => setBorn(target.value)}
-          />
-        </div>
-        <button type="submit">Set birthyear</button>
-      </form>
+      <AuthorEdit/>
     </div>
   );
 };
