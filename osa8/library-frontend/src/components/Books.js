@@ -32,8 +32,6 @@ const Books = ({ show }) => {
     )
   }
 
-  console.log(filteredBooks.data)
-
 
   if (!show) {
     return null;
@@ -50,8 +48,7 @@ const Books = ({ show }) => {
     const genreSet = new Set(genres.concat(genre));
     setGenres(Array.from(genreSet));
   };
-
-  console.log(genres)
+  
   return (
     <div>
       <h2>Books</h2>
