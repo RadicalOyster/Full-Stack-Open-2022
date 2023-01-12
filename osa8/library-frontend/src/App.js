@@ -1,49 +1,11 @@
 import { useState, useEffect } from "react";
-import { gql, useQuery, useMutation, useApolloClient } from "@apollo/client";
+import { useQuery, useMutation, useApolloClient } from "@apollo/client";
+import { ALL_AUTHORS, ALL_BOOKS, LOGIN, ME } from "./queries";
 import Authors from "./components/Authors";
 import Books from "./components/Books";
 import Login from "./components/Login";
 import NewBook from "./components/NewBook";
 import Recommended from "./components/Recommended"
-
-const ALL_AUTHORS = gql`
-  query AllAuthors {
-    allAuthors {
-      born
-      bookCount
-      name
-    }
-  }
-`;
-
-const ALL_BOOKS = gql`
-  query AllBooks {
-    allBooks {
-      author
-      genres
-      published
-      title
-    }
-  }
-`;
-
-const LOGIN = gql`
-  mutation login($username: String!, $password: String!) {
-    login(username: $username, password: $password) {
-      value
-    }
-  }
-`;
-
-const ME = gql`
-  query Me {
-    me {
-      favoriteGenre
-      id
-      username
-    }
-  }
-`;
 
 const App = () => {
   const [page, setPage] = useState("authors");

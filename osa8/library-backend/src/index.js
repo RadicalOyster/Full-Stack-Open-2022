@@ -140,7 +140,6 @@ getBooksByGenres = async (genres) => {
   const booksWithGenres = books.filter(book => {
     return book.genres.some(genre => genres.includes(genre));
   })
-  console.log(booksWithGenres)
   return booksWithGenres
 }
 
@@ -154,7 +153,9 @@ const resolvers = {
     me: (root, args, context) => {
       return context.currentUser;
     },
-    booksByGenres: async (root, args) => getBooksByGenres(args.genres),
+    booksByGenres: async (root, args) => {
+      return getBooksByGenres(args.genres)
+    },
   },
   Mutation: {
     addBook: async (root, args, context) => {

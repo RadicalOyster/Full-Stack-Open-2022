@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { gql, useQuery } from "@apollo/client";
 
 const ALL_GENRES = gql`
@@ -17,11 +17,22 @@ query BooksByGenres($genres: [String]) {
   }
 }`
 
-const Books = ({ books, show }) => {
+const Books = ({ show }) => {
   const [genres, setGenres] = useState([]);
 
   let genreList = useQuery(ALL_GENRES);
-  let filteredBooks = useQuery(BOOKS_BY_GENRES, { variables: { genres: genres } })
+  
+  let filteredBooks = useQuery(BOOKS_BY_GENRES, { variables: { genres: genres }})
+
+  if (filteredBooks.loading) {
+    return (
+      <div><h2>Books</h2>
+
+      </div>
+    )
+  }
+
+  console.log(filteredBooks.data)
 
 
   if (!show) {
@@ -40,6 +51,7 @@ const Books = ({ books, show }) => {
     setGenres(Array.from(genreSet));
   };
 
+  console.log(genres)
   return (
     <div>
       <h2>Books</h2>

@@ -1,26 +1,9 @@
-import { useEffect, useState } from "react";
-import { gql, useQuery } from "@apollo/client";
-
-const ALL_GENRES = gql`
-  query Query {
-    allGenres
-  }
-`;
-
-const BOOKS_BY_GENRES = gql`
-  query BooksByGenres($genres: [String]) {
-    booksByGenres(genres: $genres) {
-      author
-      genres
-      published
-      title
-    }
-  }
-`;
+import { useQuery } from "@apollo/client";
+import { BOOKS_BY_GENRES } from '../queries'
 
 const Books = ({ token, genre, show }) => {
   let filteredBooks = useQuery(BOOKS_BY_GENRES, {
-    variables: { genres: [genre] }, pollInterval: 2000,
+    variables: { genres: [genre] }
   });
 
   if (!token || !show) {
