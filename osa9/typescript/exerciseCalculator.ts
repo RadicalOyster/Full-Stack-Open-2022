@@ -8,7 +8,7 @@ interface ExerciseResult {
     average: number
 }
 
-const getRating = (trainingDays: number, target: number, average: number) => {
+const getRating = (target: number, average: number) => {
     if (average >= target) {
         return {
             value: 3,
@@ -41,7 +41,7 @@ const calculateExercises = (hours: Array<number>, target: number) => {
         }
     }
 
-    const rating = getRating(trainingDays, target, hoursExercised / hours.length)
+    const rating = getRating(target, hoursExercised / hours.length)
 
     const results: ExerciseResult = {
         periodLength: hours.length,
